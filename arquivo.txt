@@ -1,0 +1,9 @@
+O primeiro argumento é uma string contendo o nome do arquivo. 
+O segundo argumento é outra string, contendo alguns caracteres 
+que descrevem o modo como o arquivo será usado. modo pode ser 'r' 
+quando o arquivo será apenas lido, 'w' para escrever (se o arquivo 
+já existir seu conteúdo prévio será apagado), e 'a' para abrir o arquivo 
+para adição; qualquer escrita será adicionada ao final do arquivo. A opção 
+'r+' abre o arquivo tanto para leitura como para escrita. O argumento modo 
+é opcional, em caso de omissão será assumido 'r'.
+editei agora editei de novo

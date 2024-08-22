@@ -18,4 +18,3 @@ def read_meta_data(path):
     data.close()
     return meta_data
 print(read_meta_data(str(dir_path)+'/data/meta-data/Instituicao.txt'))
-print("teste 2")
