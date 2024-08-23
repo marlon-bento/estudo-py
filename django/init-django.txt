@@ -1,0 +1,9 @@
+mkdir (nome-pasta)
+cd (nome-pasta)
+python -m venv venv
+source venv/bin/activate
+pip install django
+django-admin startproject (nome-projeto) .
+./manage.py startapp (nome-app)
+
+./manage.py runserver
