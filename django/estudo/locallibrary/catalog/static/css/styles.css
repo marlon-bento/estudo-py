@@ -3,6 +3,11 @@
     margin-top: 20px;
     padding: 0;
     list-style: none;
-
+    height: 100vh;
   }
- 
+.logo{
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+  background-color: rgb(103, 102, 101);
+}

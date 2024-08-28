@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from catalog.models import Book, Author, Genre
-
+from catalog.models import Book, Author, Genre, BookInstance
+import uuid
+from datetime import date, timedelta
 # Rodar esse comando para popular o bd ./manage.py populate_db
 class Command(BaseCommand):
     help = 'Popula o banco de dados com autores, livros e gêneros'
@@ -81,3 +82,27 @@ class Command(BaseCommand):
             book_obj.genre.add(*[genres[genre] for genre in book['genres']])
 
         self.stdout.write(self.style.SUCCESS('Banco de dados populado com sucesso!'))
+
+
+        for book in books:
+            book_obj = Book.objects.get(title=book['title'])
+            
+            # Primeira instância
+            BookInstance.objects.create(
+                id=uuid.uuid4(),
+                book=book_obj,
+                imprint='Imprint 1',
+                due_back=date.today() + timedelta(days=30),
+                status='o'
+            )
+            
+            # Segunda instância
+            BookInstance.objects.create(
+                id=uuid.uuid4(),
+                book=book_obj,
+                imprint='Imprint 2',
+                due_back=date.today() + timedelta(days=60),
+                status='a'
+            )
+
+        self.stdout.write(self.style.SUCCESS('Instâncias de livros criadas com sucesso!'))
