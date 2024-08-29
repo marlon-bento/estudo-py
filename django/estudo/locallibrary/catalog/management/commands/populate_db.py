@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from catalog.models import Book, Author, Genre, BookInstance
 import uuid
 from datetime import date, timedelta
+import random
+from django.contrib.auth.models import User
 # Rodar esse comando para popular o bd ./manage.py populate_db
 class Command(BaseCommand):
     help = 'Popula o banco de dados com autores, livros e gêneros'
@@ -26,18 +28,18 @@ class Command(BaseCommand):
             'Naoko Takeuchi': Author.objects.get_or_create(first_name='Naoko', last_name='Takeuchi', date_of_birth='1967-03-15')[0],
             'Kentaro Miura': Author.objects.get_or_create(first_name='Kentaro', last_name='Miura', date_of_birth='1966-07-11')[0],
             'Yuu Watase': Author.objects.get_or_create(first_name='Yuu', last_name='Watase', date_of_birth='1970-03-05')[0],
-            'CLAMP': Author.objects.get_or_create(first_name='CLAMP', last_name='(Group)', date_of_birth=None)[0],
+            'CLAMP': Author.objects.get_or_create(first_name='CLAMP', last_name='(Group)', date_of_birth='1970-03-05')[0],
             'Rumiko Takahashi': Author.objects.get_or_create(first_name='Rumiko', last_name='Takahashi', date_of_birth='1957-10-10')[0],
-            'Tsugumi Ohba': Author.objects.get_or_create(first_name='Tsugumi', last_name='Ohba', date_of_birth=None)[0],
+            'Tsugumi Ohba': Author.objects.get_or_create(first_name='Tsugumi', last_name='Ohba', date_of_birth='1970-03-05')[0],
             'Takeshi Obata': Author.objects.get_or_create(first_name='Takeshi', last_name='Obata', date_of_birth='1969-02-11')[0],
             'Katsuhiro Otomo': Author.objects.get_or_create(first_name='Katsuhiro', last_name='Otomo', date_of_birth='1954-04-14')[0],
             'Nobuhiro Watsuki': Author.objects.get_or_create(first_name='Nobuhiro', last_name='Watsuki', date_of_birth='1970-05-26')[0],
             'Hiroya Oku': Author.objects.get_or_create(first_name='Hiroya', last_name='Oku', date_of_birth='1967-09-16')[0],
             'Yoshiyuki Sadamoto': Author.objects.get_or_create(first_name='Yoshiyuki', last_name='Sadamoto', date_of_birth='1962-01-29')[0],
-            'Sui Ishida': Author.objects.get_or_create(first_name='Sui', last_name='Ishida', date_of_birth=None)[0],
+            'Sui Ishida': Author.objects.get_or_create(first_name='Sui', last_name='Ishida', date_of_birth='1970-03-05')[0],
             'Hiro Mashima': Author.objects.get_or_create(first_name='Hiro', last_name='Mashima', date_of_birth='1977-05-03')[0],
             'Norihiro Yagi': Author.objects.get_or_create(first_name='Norihiro', last_name='Yagi', date_of_birth='1968-06-06')[0],
-            'Yūki Tabata': Author.objects.get_or_create(first_name='Yūki', last_name='Tabata', date_of_birth=None)[0],
+            'Yūki Tabata': Author.objects.get_or_create(first_name='Yūki', last_name='Tabata', date_of_birth='1970-03-05')[0],
             'Kazue Katō': Author.objects.get_or_create(first_name='Kazue', last_name='Katō', date_of_birth='1980-07-20')[0],
             'Hiromu Arakawa': Author.objects.get_or_create(first_name='Hiromu', last_name='Arakawa', date_of_birth='1973-05-08')[0],
             'Katsura Hoshino': Author.objects.get_or_create(first_name='Katsura', last_name='Hoshino', date_of_birth='1980-04-21')[0],
@@ -87,12 +89,33 @@ class Command(BaseCommand):
         for book in books:
             book_obj = Book.objects.get(title=book['title'])
             
+            num = random.randrange(0, 3)
+            
+            if num == 0:
+                try:
+                    user = User.objects.get(username='adm')
+                except User.DoesNotExist:
+                    raise ValueError("Usuário 'adm' não encontrado.")
+            elif num == 1:
+                try:
+                    user = User.objects.get(username='bib')
+                except User.DoesNotExist:
+                    raise ValueError("Usuário 'adm' não encontrado.")
+            else:
+                try:
+                    user = User.objects.get(username='marlon157')
+                except User.DoesNotExist:
+                    raise ValueError("Usuário 'adm' não encontrado.")
+            num = random.randrange(-10, 31)
             # Primeira instância
             BookInstance.objects.create(
+
                 id=uuid.uuid4(),
                 book=book_obj,
                 imprint='Imprint 1',
-                due_back=date.today() + timedelta(days=30),
+
+                borrower=user,
+                due_back=date.today() + timedelta(num),
                 status='o'
             )
             

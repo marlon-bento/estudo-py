@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
     {% block title %}<title>Local Library</title>{% endblock %}
     <meta charset="utf-8" />
@@ -15,12 +15,12 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
-  <body class="">
-    <div class="container-fluid">
-      <div class="row ">
-        <div class="col-sm-2 bg-dark ">
+  <body class="h-100 ">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-sm-2  h-100 fixed-top bg-dark ">
           {% block sidebar %}
-            <ul class=" sidebar-nav fs-4 ">
+            <ul class=" sidebar-nav fs-4 h-100 ">
               {% if user.is_authenticated and user.get_username %}
               <li class="text-white fs-4">
                 <div class="d-flex gap-2 align-items-center ">
@@ -32,14 +32,23 @@
                {% endif %}
               
               </li>
-              <li><a href="{% url 'index' %}">Home</a></li>
-              <li><a href="{% url 'books' %}">All books</a></li>
-              <li><a href="{% url 'authors' %}">Authors</a></li>
+              <li><a class="link-side" href="{% url 'index' %}">Home</a></li>
+              <li><a class="link-side" href="{% url 'books' %}">All books</a></li>
+              <li><a class="link-side" href="{% url 'authors' %}">Authors</a></li>
+
               {% if user.is_authenticated %}
-                
-                <li><a class="btn btn-danger" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+                {% if perms.catalog.i_am_librarian %}
+                  <li><a class="link-side text-center" href="{% url 'all-borrowed' %}">All Books Borrowed </a></li>
+                {% endif %}
+              <li><a class="link-side" href="{% url 'my-borrowed' %}">My Borrowed</a></li>
+
+              <form method="post" action="{% url 'logout' %}?next={{ request.path }}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-2">Logout</button>
+              </form>
               {% else %}
-                <li><a class="btn btn-success" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+                
+                <li><a class="btn btn-success mt-2 " href="{% url 'login'%}?next={{request.path}}">Login</a></li>
               {% endif %}
             </ul>
   
@@ -47,7 +56,8 @@
             
           {% endblock %}
         </div>
-        <div class="col-sm-10">
+
+        <div class="col-sm-10 offset-2">
           {% block content %}{% endblock %}
 
           {% block pagination %}
