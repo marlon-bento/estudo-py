@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/home/marlon/Área de trabalho/estudoPy/estudo/django/estudo/locallibrary/venv/bin/python" "$0" "$@"
+'''exec' "/home/marlon/Área de trabalho/estudoPy/estudo-py/django/estudo/locallibrary/venv/bin/python" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

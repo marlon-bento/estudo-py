@@ -44,3 +44,7 @@
   color: black;
   
 }
+.field-input-page{
+  min-width: 30px;
+  min-height: 30px;
+}

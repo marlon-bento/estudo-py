@@ -94,7 +94,9 @@ def renew_book_librarian(request, pk):
 
 class BookListView(LoginRequiredMixin, generic.ListView):
     model = Book
-    paginate_by = 7
+    paginate_by = 3
+   
+    
 class BookDetailView(generic.DetailView):
     model = Book
 
@@ -103,6 +105,7 @@ class BookDetailView(generic.DetailView):
 class AuthorListView(generic.ListView):
     model = Author
     paginate_by = 7
+
 class AuthorDetailView(generic.DetailView):
     model = Author
 
@@ -115,6 +118,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
     
+
 class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
     """Generic class-based view listing books on loan to current user."""
     permission_required = "catalog.i_am_librarian"
@@ -125,6 +129,7 @@ class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
     
+
 
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
