@@ -7,9 +7,9 @@
     <ul>
 
       {% for bookinst in bookinstance_list %}
-      <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-        <a href="{% url 'book-detail' bookinst.book.pk %}">{{bookinst.book.title}}</a> ({{ bookinst.due_back }})  <strong>{% if bookinst.is_overdue %}IS LATE{% endif %}</strong>
-      </li>
+        <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
+          <a href="{% url 'book-detail' bookinst.book.pk %}">{{bookinst.book.title}}</a> ({{ bookinst.due_back }})  <strong>{% if bookinst.is_overdue %}IS LATE{% endif %}</strong>
+        </li>
       {% endfor %}
     </ul>
 

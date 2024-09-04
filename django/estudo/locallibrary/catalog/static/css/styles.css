@@ -20,8 +20,27 @@
   transition: all 100ms ease-out;
   font-size: 18px;
 }
-.link-side:hover{
-  transition: all 300ms ease-out;
-  font-size: 20px;
-  color: rgb(154, 150, 150);
+
+.list_borrowed {
+  list-style: none;
+  
+}
+.list_borrowed li{
+  padding: 10px;
+  background-color: rgba(232, 230, 227, 0.625);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  -webkit-box-shadow: 3px 4px 7px 0px rgba(0,0,0,0.58);
+  -moz-box-shadow: 3px 4px 7px 0px rgba(0,0,0,0.58);
+  box-shadow: 3px 4px 7px 0px rgba(0,0,0,0.58);
+}
+.list_borrowed li a{
+  color: black;
+  font-weight: bold;
+}
+.list_borrowed li span{
+  color: black;
+  
 }
