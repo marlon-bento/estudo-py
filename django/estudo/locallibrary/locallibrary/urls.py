@@ -20,11 +20,41 @@ from django.views.generic import RedirectView
 from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
+
+
+from rest_framework import routers, serializers, viewsets
+from django.contrib.auth.models import User
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'is_staff']
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+#router = routers.DefaultRouter()
+#router.register(r'users', UserViewSet)
+
+#from quickstart import views
+#router = routers.DefaultRouter()
+#router.register(r'users', views.UserViewSet)
+#router.register(r'groups', views.GroupViewSet)
+#router.register(r'music', views.MusicList)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('catalog/', include('catalog.urls')), 
-    path('', RedirectView.as_view(url='/catalog/', permanent=True)),
+    path('api/v1/catalog/', include('api_catalog.urls')),
+    path('api/v1/quickstart/', include('quickstart.urls')),
+    #path('', RedirectView.as_view(url='/catalog/', permanent=True)),
     path('accounts/', include('django.contrib.auth.urls')),
-    
+
+    #path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

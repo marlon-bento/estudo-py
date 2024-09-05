@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from catalog.forms import RenewBookForm
+from django.db.models import RestrictedError
 
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -147,3 +148,19 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
     permission_required = "catalog.i_am_librarian"
     model = Author
     success_url = reverse_lazy('authors')
+    def form_valid(self, form):
+        try:
+            success_url = self.get_success_url()
+            self.object.delete()
+            return HttpResponseRedirect(success_url)
+        except RestrictedError:
+            return HttpResponseRedirect(reverse('author-has-book') )
+def author_has_book(request):  
+    error_message = "Author já possui livro registrado, e não pode ser exclúido."   
+    redirect = reverse_lazy('authors')
+    context = {
+        'error_message': error_message,
+        'redirect': redirect,
+    }
+   
+    return render(request, 'error.html', context= context )

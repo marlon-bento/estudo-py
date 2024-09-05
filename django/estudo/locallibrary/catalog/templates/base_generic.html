@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="en" class="h-100">
   <head>
+    {% load static %}
     {% block title %}<title>Local Library</title>{% endblock %}
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
     
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'img/favicon.png' %}"/>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler-flags.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler-payments.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler-vendors.min.css">
 
     <!-- Add additional CSS in static file -->
-    {% load static %}
+    
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body class="h-100 ">
@@ -99,7 +101,7 @@
                               <p class="fs-1">...</p>
                             {% endif %}
                           {% else %}
-                            {% rate_next_pages num_page page_obj.number as beetwen_page %}
+                            {% rate_next_pages num_page page_obj.number page_obj.paginator.num_pages as beetwen_page %}
                             {% if beetwen_page  %}
                               
                               <a href="{{request.path}}?page={{num_page}}" class="field-input-page d-flex justify-content-center align-items-center {% if num_page == page_obj.number %}bg-dark{% else %} bg-gray-900{% endif %}" href="">
@@ -108,12 +110,13 @@
                                 </div>
                               </a>
                             {% else %}
+                            {% rate_first_last_pages page_obj.paginator.num_pages num_page page_obj.number as first_last_pages %}
+                            {% if first_last_pages%}
+                              <p class="fs-1">...</p>
+                            {% endif %}
                               {% rate_last_pages page_obj.paginator.num_pages page_obj.number num_page as last_pages %}
                               {% if last_pages  %}
-                                  {% rate_first_last_pages page_obj.paginator.num_pages num_page as first_last_pages %}
-                                  {% if first_last_pages%}
-                                    <p class="fs-1">...</p>
-                                  {% endif %}
+
                                   <a href="{{request.path}}?page={{num_page}}" class="field-input-page d-flex justify-content-center align-items-center {% if num_page == page_obj.number %}bg-dark{% else %} bg-gray-900{% endif %}" href="">
                                   <div >
                                     {{num_page}} 

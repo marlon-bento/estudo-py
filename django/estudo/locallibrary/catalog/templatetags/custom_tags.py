@@ -7,20 +7,22 @@ def get_range(value):
     return range(1, value + 1)
 
 @register.simple_tag
-def rate_next_pages (page, atual):
+def rate_next_pages (page, current_page, num_pages):
 
-    if page == atual:
+    if page == current_page:
         return True
-    elif atual == page -1 and page != 3:
+    elif current_page == page -1 and page != 3:
         return True
-    elif atual == page +1:
+    elif current_page == page +1:
+        return True
+    elif page <= num_pages and page > num_pages -2:
         return True
     else:
         return False
 
 @register.simple_tag
-def rate_last_pages (num_pages, page_atual,  page_for):
-    if page_atual != num_pages -1 and page_atual != num_pages -2:
+def rate_last_pages (num_pages, current_page,  page_for):
+    if current_page != num_pages -1 and current_page != num_pages -2:
         if page_for <= num_pages and page_for > num_pages -2:
             return True
         else:
@@ -29,8 +31,9 @@ def rate_last_pages (num_pages, page_atual,  page_for):
         return False
 
 @register.simple_tag
-def rate_first_last_pages (num_pages,  page_for):
-    if page_for == num_pages -2:
+def rate_first_last_pages (num_pages,  page_for, current_page):
+    if page_for == num_pages -2 and current_page > 2 and (current_page != num_pages):
+        print(num_pages, page_for)
         return True
     else:
         return False
