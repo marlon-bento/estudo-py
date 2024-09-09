@@ -1,5 +1,7 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
+
+from quickstart.validators import BookValidator
 from .models import Music
 from catalog.models import Genre
 from catalog.models import Author
@@ -32,18 +34,30 @@ class GenreSerializer(serializers.Serializer):
 class BookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['id', 'title' , 'author_id', 'author_name', 'summary', 'isbn', 'genres']
-        
-    author_id = serializers.PrimaryKeyRelatedField(
-        queryset = Author.objects.all(),
-    )
+        fields = ['id', 'title' , 'author', 'author_name', 'summary', 'isbn', 'genres','genre']
 
     author_name = serializers.StringRelatedField( source = 'author')
     
     genres = GenreSerializer(
         many = True,
-        source = 'genre'
+        source = 'genre',
+        read_only = True
     )
+    genre = serializers.PrimaryKeyRelatedField(
+        queryset = Genre.objects.all(),
+        many=True,
+        write_only=True
+        
+    )
+    def validate(self, attrs):
+        
+        
+        super_validate = super().validate(attrs)
+        BookValidator(
+            data=attrs,
+            ErrorClass=serializers.ValidationError,
+        )
+        return super_validate
 
 #fazendo na mão
 class BookSerializer(serializers.Serializer):
@@ -55,7 +69,7 @@ class BookSerializer(serializers.Serializer):
     
     #author_complete_name = serializers.SerializerMethodField()
     
-    author_id = serializers.PrimaryKeyRelatedField(
+    author= serializers.PrimaryKeyRelatedField(
         queryset = Author.objects.all(),
     )
 

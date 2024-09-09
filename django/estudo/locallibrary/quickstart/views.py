@@ -12,33 +12,63 @@ from catalog.models import Book
 from .serializers import BookSerializer, BookModelSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
+
+class BookPagination(PageNumberPagination):
+    page_size= 2
+class book_api_list(viewsets.ViewSet):
+    queryset = Book.objects
+    serializer_class = BookSerializer
+    pagination_class = BookPagination
+
 
 @api_view(http_method_names=['get', 'post'])
 @permission_classes([AllowAny]) 
 def book_api_list(request):
-    if request.method == 'GET':
-        books = Book.objects.all().order_by('title') 
+     if request.method == 'GET':
+         books = Book.objects.all().order_by('title') 
         #serializer = BookSerializer(instance=books, many=True)  
-        serializer =  BookModelSerializer(instance= books, many= True) 
+         serializer =  BookModelSerializer(instance= books, many= True) 
 
     
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = BookModelSerializer(data =request.data)
-        if serializer.is_valid():
-            return Response(
-                {'criei aqui maluco'}, 
+         return Response(serializer.data)
+     elif request.method == 'POST':
+         serializer = BookModelSerializer(data=request.data)
+         serializer.is_valid(raise_exception=True)
 
-                status = status.HTTP_201_CREATED
-                )
-        return Response(serializer.errors, status = status.HTTP_400_BD_REQUEST)
-@api_view()
+         serializer.save()
+         return Response(
+             serializer.data,
+             status=status.HTTP_201_CREATED
+         )
+        
+        
+@api_view(['get', 'patch','delete'])
 @permission_classes([AllowAny]) 
 def book_api_detail(request, pk):
     book = get_object_or_404(Book , pk = pk)  
-    serializer = BookSerializer(instance=book)  
-    return Response(serializer.data)
 
+    if request.method == 'GET':
+        serializer = BookModelSerializer(instance=book)  
+        return Response(serializer.data)
+    elif request.method == 'PATCH':
+        serializer = BookModelSerializer(
+            instance=book, 
+            data=request.data,
+            partial=True
+            )  
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+        return Response(
+            serializer.data
+        )
+
+    elif request.method == 'DELETE':
+        book.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
