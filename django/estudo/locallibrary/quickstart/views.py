@@ -17,79 +17,90 @@ from rest_framework.pagination import PageNumberPagination
 
 class BookPagination(PageNumberPagination):
     page_size= 2
-class book_api_list(viewsets.ViewSet):
-    queryset = Book.objects
-    serializer_class = BookSerializer
+
+class Book_api_list(viewsets.ModelViewSet):
+    queryset = Book.objects.all().order_by('title') 
+    serializer_class = BookModelSerializer
     pagination_class = BookPagination
+    
 
-
-@api_view(http_method_names=['get', 'post'])
-@permission_classes([AllowAny]) 
-def book_api_list(request):
-     if request.method == 'GET':
-         books = Book.objects.all().order_by('title') 
-        #serializer = BookSerializer(instance=books, many=True)  
-         serializer =  BookModelSerializer(instance= books, many= True) 
+# @api_view(http_method_names=['get', 'post'])
+# @permission_classes([AllowAny]) 
+# def book_api_list(request):
+#      if request.method == 'GET':
+#          books = Book.objects.all().order_by('title') 
+#         #serializer = BookSerializer(instance=books, many=True)  
+#          serializer =  BookModelSerializer(instance= books, many= True) 
 
     
-         return Response(serializer.data)
-     elif request.method == 'POST':
-         serializer = BookModelSerializer(data=request.data)
-         serializer.is_valid(raise_exception=True)
+#          return Response(serializer.data)
+#      elif request.method == 'POST':
+#          serializer = BookModelSerializer(data=request.data)
+#          serializer.is_valid(raise_exception=True)
 
-         serializer.save()
-         return Response(
-             serializer.data,
-             status=status.HTTP_201_CREATED
-         )
+#          serializer.save()
+#          return Response(
+#              serializer.data,
+#              status=status.HTTP_201_CREATED
+#          )
         
         
-@api_view(['get', 'patch','delete'])
-@permission_classes([AllowAny]) 
-def book_api_detail(request, pk):
-    book = get_object_or_404(Book , pk = pk)  
+# @api_view(['get', 'patch','delete'])
+# @permission_classes([AllowAny]) 
+# def book_api_detail(request, pk):
+#     book = get_object_or_404(Book , pk = pk)  
 
-    if request.method == 'GET':
-        serializer = BookModelSerializer(instance=book)  
-        return Response(serializer.data)
-    elif request.method == 'PATCH':
-        serializer = BookModelSerializer(
-            instance=book, 
-            data=request.data,
-            partial=True
-            )  
+#     if request.method == 'GET':
+#         serializer = BookModelSerializer(instance=book)  
+#         return Response(serializer.data)
+#     elif request.method == 'PATCH':
+#         serializer = BookModelSerializer(
+#             instance=book, 
+#             data=request.data,
+#             partial=True
+#             )  
 
-        serializer.is_valid(raise_exception=True)
+#         serializer.is_valid(raise_exception=True)
 
-        serializer.save()
-        return Response(
-            serializer.data
-        )
+#         serializer.save()
+#         return Response(
+#             serializer.data
+#         )
 
-    elif request.method == 'DELETE':
-        book.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+#     elif request.method == 'DELETE':
+#         book.delete()
+#         return Response(status = status.HTTP_204_NO_CONTENT)
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all().order_by('name')
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-class MusicList(viewsets.GenericViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
 
-    queryset = Music.objects.all().order_by('title')
-    serializer_class = MusicSerializer
+
+
+
+
+
+
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+
+# class GroupViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows groups to be viewed or edited.
+#     """
+#     queryset = Group.objects.all().order_by('name')
+#     serializer_class = GroupSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+# class MusicList(viewsets.GenericViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+#     queryset = Music.objects.all().order_by('title')
+#     serializer_class = MusicSerializer
     
 
 
