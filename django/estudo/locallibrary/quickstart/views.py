@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 class BookPagination(PageNumberPagination):
     page_size= 2
 
@@ -22,8 +22,8 @@ class Book_api_list(viewsets.ModelViewSet):
     queryset = Book.objects.all().order_by('title') 
     serializer_class = BookModelSerializer
     pagination_class = BookPagination
-    
-
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    http_method_names = ['get', 'head', 'options','patch', 'delete', 'post']
 # @api_view(http_method_names=['get', 'post'])
 # @permission_classes([AllowAny]) 
 # def book_api_list(request):
