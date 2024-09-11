@@ -3,9 +3,8 @@ from rest_framework import serializers
 
 from quickstart.validators import BookValidator
 from .models import Music
-from catalog.models import Genre
-from catalog.models import Author
-from catalog.models import Book
+from catalog.models import Genre, Author,Book , BookInstance
+
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,10 +30,34 @@ class GenreSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
 
+
+
+class BooksByAuthor(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ['id', 'title', 'summary']
+
+
+class AuthorModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = ['id','first_name','last_name','date_of_birth','date_of_death','books']
+    
+    id = serializers.IntegerField(read_only=True)
+    books = BooksByAuthor(many=True, read_only=True)
+    #books  = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    #books = serializers.StringRelatedField(many=True, read_only=True)
+    
+
+
+class BookInstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookInstance
+        fields = ['id', 'imprint','due_back','borrower']
 class BookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['id', 'title' , 'author', 'author_name', 'summary', 'isbn', 'genres','genre']
+        fields = ['id', 'title' , 'author', 'author_name', 'summary', 'isbn', 'genres','genre','instances']
 
     author_name = serializers.StringRelatedField( source = 'author')
     
@@ -49,9 +72,8 @@ class BookModelSerializer(serializers.ModelSerializer):
         write_only=True
         
     )
+    instances = BookInstanceSerializer(many=True, read_only=True)
     def validate(self, attrs):
-        
-        
         super_validate = super().validate(attrs)
         BookValidator(
             data=attrs,
@@ -59,6 +81,14 @@ class BookModelSerializer(serializers.ModelSerializer):
         )
         return super_validate
 
+class LoanedBooksByUserListSerializer(serializers.ModelSerializer):
+    book_title = serializers.StringRelatedField(source = 'book')
+    
+    
+    class Meta:
+        model = BookInstance
+        fields = ['book','book_title' ,'status', 'due_back','borrower']
+        
 #fazendo na mão
 class BookSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
