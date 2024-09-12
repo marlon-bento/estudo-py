@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from .configs.rest_config import *
+from .configs.cors_headers import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,10 +44,16 @@ INSTALLED_APPS = [
     #django rest framework
     'rest_framework',
     'rest_framework_simplejwt',
+
+    #cors headers
+    'corsheaders'
 ]
 
 
 MIDDLEWARE = [
+    #cors headers
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
