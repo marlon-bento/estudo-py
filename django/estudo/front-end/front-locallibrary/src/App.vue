@@ -5,10 +5,10 @@ import Header from './components/Header.vue'
 
 <template>
   <main class="row">
-    <div class="col-2 bg-info fixed-top h-100">
+    <div class="col-2 bg-dark fixed-top h-100">
       <Header/>
     </div>
-    <div class="offset-2 col-10 bg-dark ">
+    <div class="offset-2 col-10 bg-white  h-100  p-3">
       <RouterView />
     </div>
   </main>

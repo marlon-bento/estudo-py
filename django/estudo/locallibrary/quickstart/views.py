@@ -22,7 +22,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import RestrictedError
 
 class BookPagination(PageNumberPagination):
-    page_size= 2
+    page_size= 7
 
 class Book_api_list(viewsets.ModelViewSet):
     queryset = Book.objects.all().order_by('title') 
