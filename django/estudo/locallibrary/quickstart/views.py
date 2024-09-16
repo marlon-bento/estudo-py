@@ -21,16 +21,41 @@ from django.shortcuts import get_object_or_404
 
 from django.db.models import RestrictedError
 
-class BookPagination(PageNumberPagination):
-    page_size= 7
+#class BookPagination(PageNumberPagination):
+#    page_size= 7
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size = 7
+
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'total_pages': self.page.paginator.num_pages,
+            'next': self.get_next_page_number(),
+            'previous': self.get_previous_page_number(),
+            'results': data
+        })
+
+    def get_next_page_number(self):
+        if self.page.has_next():
+            return self.page.next_page_number()
+        return None
+    def get_previous_page_number(self):
+        if self.page.has_previous():
+            return self.page.previous_page_number()
+        return None
+    def get_previous_page_number(self):
+        if self.page.has_previous():
+            return self.page.previous_page_number()
+        return None
 
 class Book_api_list(viewsets.ModelViewSet):
     queryset = Book.objects.all().order_by('title') 
     serializer_class = BookModelSerializer
-    pagination_class = BookPagination
+    #pagination_class = BookPagination
+    pagination_class = CustomPageNumberPagination
     permission_classes = [IsAuthenticatedOrReadOnly,]
     http_method_names = ['get', 'head', 'options','patch', 'delete', 'post']
-
 
 class Author_api_list(viewsets.ModelViewSet):
     queryset = Author.objects.all().order_by('first_name') 

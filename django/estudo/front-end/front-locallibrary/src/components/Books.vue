@@ -6,15 +6,13 @@ const url = ref("http://127.0.0.1:8000/api/v1/quickstart/books/");
 const dataBooks = ref({ results: [] });
 
 const erroApi = ref(false);
+import { computed } from 'vue';
+let currentPage  = computed(() => dataBooks.value.previous == null ? 1: dataBooks.value.previous+1);
 async function getBooks(pagina) {
     try {
-        console.log(pagina);
-
         const books = await axios.get(pagina == "" ? url.value : pagina);
-
         dataBooks.value = books.data;
-        console.log(dataBooks.value);
-        
+
     } catch (e) {
         erroApi.value = true;
     }
@@ -88,18 +86,13 @@ onMounted(async () => {
         
     </div>
 
-   
-    
-    <div class="d-flex justify-content-center">
-        <a v-if="dataBooks.previous != null" @click.prevent="() => {
-            getBooks(dataBooks.previous);
-        }
-            " href="#">previous</a>
-        <a v-if="dataBooks.next != null" @click.prevent="() => {
-            getBooks(dataBooks.next);
-        }
-            " href="#">next</a>
-    </div>
+    <Pagination :next="dataBooks.next" 
+    :previous="dataBooks.previous"  
+    :count="dataBooks.count" 
+    :current="currentPage" 
+    :total_pages="dataBooks.total_pages" 
+    @previous-page="() => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${dataBooks.previous}`)}" 
+    @change-page="(page) => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${page}`)}" 
+    @next-page="() => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${dataBooks.next}`)}" />
 
-    <Pagination :next="dataBooks.next" :previous="dataBooks.previous"  :count="dataBooks.count"/>
 </template>
