@@ -13,10 +13,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import permissions, viewsets, generics
 
-from catalog.models import Book, Author, BookInstance
+from catalog.models import Book, Author, BookInstance, Genre
 
 
-from .serializers import BookSerializer, BookModelSerializer, AuthorModelSerializer,LoanedBooksByUserListSerializer
+from .serializers import BookSerializer, BookModelSerializer, AuthorModelSerializer,LoanedBooksByUserListSerializer,GenreModelSerializer
 from django.shortcuts import get_object_or_404
 
 from django.db.models import RestrictedError
@@ -74,7 +74,40 @@ class Author_api_list(viewsets.ModelViewSet):
                 {"detail": "Este autor possui livros registrados e não pode ser deletado."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
+class Author_api_all_list(viewsets.ModelViewSet):
+    queryset = Author.objects.all().order_by('first_name') 
+    serializer_class = AuthorModelSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    http_method_names = ['get', 'head', 'options','patch', 'delete', 'post']
+    pagination_class = None
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        try:
+            # Tenta deletar o autor
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except RestrictedError:
+            return Response(
+                {"detail": "Este autor possui livros registrados e não pode ser deletado."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+class Genres_api_all_list(viewsets.ModelViewSet):
+    queryset = Genre.objects.all().order_by('name') 
+    serializer_class = GenreModelSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    http_method_names = ['get', 'head', 'options','patch', 'delete', 'post']
+    pagination_class = None
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        try:
+            # Tenta deletar o autor
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except RestrictedError:
+            return Response(
+                {"detail": "Este autor possui livros registrados e não pode ser deletado."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 class LoanedBooksByUserListView(viewsets.ModelViewSet):
     
     serializer_class = LoanedBooksByUserListSerializer

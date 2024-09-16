@@ -48,12 +48,20 @@ class AuthorModelSerializer(serializers.ModelSerializer):
     #books  = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     #books = serializers.StringRelatedField(many=True, read_only=True)
     
+class GenreModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ['id','name']
+    id = serializers.IntegerField(read_only=True)
 
 
 class BookInstanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookInstance
-        fields = ['id', 'imprint','due_back','borrower']
+        fields = ['id', 'imprint','due_back','status','borrower']
+
+    borrower = serializers.StringRelatedField()
+
 class BookModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book

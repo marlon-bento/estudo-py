@@ -7,13 +7,13 @@
   <div style="margin-left:20px;margin-top:20px">
     <div class="ps-3 pt-1">
         <h3><strong>Books</strong></h3>
-        {% for copy in author.book_set.all %}
+        {% for copy in author.books.all %}
         <hr>
-        <a href="{{copy.get_absolute_url}}">{{copy.title}}</a>
+        <a href="{% url 'book-detail' copy.id %}">{{copy.title}}</a>
         <p>{{copy.summary}}</p>
 
         {% endfor %}
-        {% if not author.book_set.all%}
+        {% if not author.books.all%}
           there are no books
         {% endif%}
     </div>

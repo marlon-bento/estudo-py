@@ -6,8 +6,10 @@ from . import views
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView, TokenVerifyView)
 router = routers.SimpleRouter()
-router.register('books', views.Book_api_list)
-router.register('authors', views.Author_api_list)
+router.register('books', views.Book_api_list, basename='api_books') 
+router.register('authors', views.Author_api_list, basename="api_authors")
+router.register('all/authors', views.Author_api_all_list, basename="api_all_authors")
+router.register('all/genres', views.Genres_api_all_list, basename="api_all_genres")
 router.register('mybooks', views.LoanedBooksByUserListView, basename='loanedbooks')
 
 

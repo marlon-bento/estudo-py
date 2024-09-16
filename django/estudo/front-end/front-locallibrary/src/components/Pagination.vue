@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits } from 'vue';
+
 const props = defineProps(['next', 'previous', 'count', 'current', 'total_pages'])
 const emit = defineEmits(['nextPage', 'previousPage', 'changePage']);
 </script>

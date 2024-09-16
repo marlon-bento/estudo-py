@@ -1,20 +1,31 @@
 <script setup>
 import { onMounted, ref } from "vue";
+
+import AlertWarmingTryAgain from '@/components/AlertWarmingTryAgain.vue';
+import Alert404 from '@/components/Alert404.vue';
+
 import axios from "axios";
 import Pagination from "./Pagination.vue";
+
 const url = ref("http://127.0.0.1:8000/api/v1/quickstart/books/");
 const dataBooks = ref({ results: [] });
 
-const erroApi = ref(false);
+const erroApi = ref("");
 import { computed } from 'vue';
 let currentPage  = computed(() => dataBooks.value.previous == null ? 1: dataBooks.value.previous+1);
+
 async function getBooks(pagina) {
     try {
+        erroApi.value = ""
         const books = await axios.get(pagina == "" ? url.value : pagina);
         dataBooks.value = books.data;
 
     } catch (e) {
-        erroApi.value = true;
+        if (e.response && e.response.status === 404) {
+            erroApi.value = "404"
+        } else {
+            erroApi.value = "error";
+        }
     }
 }
 
@@ -33,10 +44,10 @@ onMounted(async () => {
                 <th scope="col">ISBN</th>
             </tr>
         </thead>
-        <tbody v-bind:key="index" v-for="(item, index) in dataBooks.results">
+        <tbody :key="index" v-for="(item, index) in dataBooks.results">
             <tr class="table-info text-white">
                 <td>
-                    <a href="{{ `http://127.0.0.1:8000/api/v1/quickstart/books/${item.id}`}}">{{ item.title }}</a>
+                    <router-link :to="{ name: 'book-detail', params: { id: item.id } }">{{ item.title }}</router-link>  
                 </td>
                 <td>{{ item.author_name }}</td>
                 <td>{{ item.isbn }}</td>
@@ -44,55 +55,18 @@ onMounted(async () => {
         </tbody>
     </table>
 
-    <div v-if="erroApi" class="alert alert-warning alert-dismissible" role="alert">
-        <div class="d-flex">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24"
-                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M12 9v2m0 4v.01"></path>
-                    <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75">
-                    </path>
-                </svg>
-            </div>
-            <div>
-                <h4 class="alert-title">Wow! Everything worked!</h4>
-                <div class="text-secondary">Your account has been saved!</div>
-                <div class="btn-list">
-                    <a @click="getBooks" href="#" class="btn btn-success">Try again</a>
-                    >
-                </div>
-            </div>
-        </div>
-        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-    </div>
-
-    <div :style="{ height: '50px' }" v-if="dataBooks.results.length == 0 && erroApi == false"
-        class="alert alert-important alert-danger alert-dismissible m-2 " role="alert">
-        <div class="d-flex">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24"
-                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <circle cx="12" cy="12" r="9"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-            </div>
-            <div>There are no books</div>
-        </div>
-        
-    </div>
+    <Alert404  description="Não há nenhum livro"   v-else-if="erroApi == '404'"  ></Alert404>
+    
+    <AlertWarmingTryAgain v-else title="Falha ao acessar o servidor"
+    description="Por favor tente mais tarde" button="Tentar de novo" @try-again="getBooks"></AlertWarmingTryAgain>
 
     <Pagination :next="dataBooks.next" 
     :previous="dataBooks.previous"  
     :count="dataBooks.count" 
     :current="currentPage" 
     :total_pages="dataBooks.total_pages" 
-    @previous-page="() => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${dataBooks.previous}`)}" 
-    @change-page="(page) => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${page}`)}" 
-    @next-page="() => {getBooks(`http://127.0.0.1:8000/api/v1/quickstart/books/?page=${dataBooks.next}`)}" />
+    @previous-page="() => {getBooks(`${url}?page=${dataBooks.previous}`)}" 
+    @change-page="(page) => {getBooks(`${url}?page=${page}`)}" 
+    @next-page="() => {getBooks(`${url}?page=${dataBooks.next}`)}" />
 
 </template>
