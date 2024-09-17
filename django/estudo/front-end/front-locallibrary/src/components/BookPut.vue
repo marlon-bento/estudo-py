@@ -5,10 +5,32 @@ import AlertScuccess from '@/components/AlertScuccess.vue'
 const dataAuthors = ref([])
 const dataGenres = ref([])
 
+const props = defineProps(['id'])
+const id = props.id
 
+const url = ref(`http://127.0.0.1:8000/api/v1/quickstart/books/${id}/`)
+const bookData = ref("")
+
+async function getBook() {
+    try {
+        const book = await axios.get(url.value);
+        bookData.value = book.data;
+        for (let i =0 ;i < bookData.value.genres.length ;i++){
+            bookData.value.genres[i] = bookData.value.genres[i].id
+        }
+        checkedGenres.value = bookData.value.genres
+        title.value = bookData.value.title
+        summary.value = bookData.value.summary
+        author.value = bookData.value.author
+        isbn.value = bookData.value.isbn
+        console.log(bookData)
+    } catch (e) {
+        console.log(e)
+    }
+}
 // variaveis dos formularios
 
-const checkedGenres = ref([])
+const checkedGenres = ref("")
 const title = ref("")
 const summary = ref("")
 const author = ref("")
@@ -30,9 +52,7 @@ async function enviarDados(){
             author: author.value
         }
         try{
-            const response = await axios.post("http://127.0.0.1:8000/api/v1/quickstart/books/",dataObject)
-
-            console.log(response.data) 
+            const response = await axios.patch("http://127.0.0.1:8000/api/v1/quickstart/books/"+`${id}/`,dataObject)
             create.value = response.data
 
 
@@ -58,7 +78,7 @@ async function getAuthors() {
     try {
         const authors = await axios.get("http://127.0.0.1:8000/api/v1/quickstart/all/authors/")
         dataAuthors.value = authors.data
-
+        
     } catch (e) {
         console.log(e)
     }
@@ -68,7 +88,7 @@ async function getGenres() {
     try {
         const genres = await axios.get("http://127.0.0.1:8000/api/v1/quickstart/all/genres/")
         dataGenres.value = genres.data
-        console.log(dataGenres.value)
+        
     } catch (e) {
         console.log(e)
     }
@@ -78,13 +98,14 @@ onMounted(async () => {
 
     await getAuthors()
     await getGenres()
+    await getBook()
 })
 </script>
 
 <template>
-    <AlertScuccess  v-if="create" button="Add More" title="Livro criado com sucesso" :description="'o livro '+create.title+' foi criado com sucesso'"  @more="createNew"></AlertScuccess>
+    <AlertScuccess  v-if="create" button="none" title="Livro editado com sucesso" :description="'o livro '+create.title+' foi editado com sucesso'"  @more="createNew"></AlertScuccess>
     <form class="bg-cyan-lt rounded  p-6" v-else>
-        <h1 class="text-center">Adicionar novo livro</h1>
+        <h1 class="text-center">Editar o livro</h1>
 
         <div class="row mb-3">
             <div class="col-6">

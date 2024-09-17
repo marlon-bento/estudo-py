@@ -54,7 +54,8 @@ class Book_api_list(viewsets.ModelViewSet):
     serializer_class = BookModelSerializer
     #pagination_class = BookPagination
     pagination_class = CustomPageNumberPagination
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [ AllowAny,]
+    #permission_classes = [IsAuthenticatedOrReadOnly,]
     http_method_names = ['get', 'head', 'options','patch', 'delete', 'post']
 
 class Author_api_list(viewsets.ModelViewSet):

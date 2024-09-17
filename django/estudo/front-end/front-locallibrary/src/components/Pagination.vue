@@ -17,7 +17,7 @@ const emit = defineEmits(['nextPage', 'previousPage', 'changePage']);
       </a>
 
       <div v-for="n in props.total_pages" :key="n" >
-         <div v-if="props.total_pages < 7">
+         <div v-if="props.total_pages < 100">
             <div>
                <a @click.prevent="$emit('changePage', n)"
                   class="field-input-page d-flex justify-content-center align-items-center "
