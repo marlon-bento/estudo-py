@@ -4,6 +4,7 @@ import Books from '@/components/Books.vue'
 import BookDetail from '@/components/BookDetail.vue'
 import AddNewBook from '@/components/AddNewBook.vue'
 import BookPut from '@/components/BookPut.vue'
+import Login from '@/components/Login.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,6 +21,15 @@ const router = createRouter({
     {
       path: '/add/book',
       name: 'add-book',
+      beforeEnter: function (to, from, next) {
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+          next('/login')
+        } else {
+          next()
+        }
+      },
       component: AddNewBook,
     },
     {
@@ -33,6 +43,11 @@ const router = createRouter({
       name: 'book-put',
       component: BookPut, 
       props: true 
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login, 
     },
 
   ]

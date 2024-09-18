@@ -14,6 +14,7 @@ const verificationVar = ref("")
 const filhoRef = ref(null)
 const erroApi = ref("");
 const bookId = ref("")
+const token = ref("")
 import { computed } from 'vue';
 let currentPage = computed(() => dataBooks.value.previous == null ? 1 : dataBooks.value.previous + 1);
 
@@ -26,7 +27,10 @@ async function getBooks(pagina) {
     } catch (e) {
         if (e.response && e.response.status === 404) {
             erroApi.value = "404"
-        } else {
+        }else if (e.response && e.response.status === 401) {
+            erroApi.value = "401"
+        }
+        else {
             erroApi.value = "error";
         }
     }
@@ -37,28 +41,36 @@ async function deleteBook(id) {
 
     try {
         erroApi.value = ""
-        const books = await axios.delete(url.value + `${id}/`);
+        const books = await axios.delete(url.value + `${id}/`, {
+            headers:{
+                'Authorization': `Bearer ${token.value}`
+            }
+    });
         alert("livro deletado com sucesso")
         getBooks("");
 
     } catch (e) {
         if (e.response && e.response.status === 404) {
             erroApi.value = "404"
+        }
+        else if (e.response && e.response.status === 401) {
+            erroApi.value = "401"
         } else {
             erroApi.value = "error";
         }
     }
 
-
 }
 
 onMounted(async () => {
+    token.value = localStorage.getItem('token')
     await getBooks("")
 });
 </script>
 
 
 <template>
+    <Alert404 description="Sem permissão ou não está logado" v-if="erroApi == '401'"></Alert404>
     <Confirm ref="filhoRef" v-if="confirmComponent" @yes="() => { deleteBook(bookId) }" @no="confirmComponent = false">
     </Confirm>
     <table v-if="dataBooks.results.length > 0" class="table">
@@ -88,6 +100,7 @@ onMounted(async () => {
     </table>
 
     <Alert404 description="Não há nenhum livro" v-else-if="erroApi == '404'"></Alert404>
+    
 
     <AlertWarmingTryAgain v-else title="Falha ao acessar o servidor" description="Por favor tente mais tarde"
         button="Tentar de novo" @try-again="getBooks"></AlertWarmingTryAgain>

@@ -5,6 +5,25 @@ from . import views
 
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView, TokenVerifyView)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+# alteração na authenticação para retornar o nome do usuário também
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Adiciona o primeiro nome ao token
+        data['first_name'] = self.user.first_name
+        return data
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+
+
+
+
 router = routers.SimpleRouter()
 router.register('books', views.Book_api_list, basename='api_books') 
 router.register('authors', views.Author_api_list, basename="api_authors")
@@ -55,7 +74,8 @@ urlpatterns = [
      #jwt 
      path(
         'token/',
-        TokenObtainPairView.as_view(),
+        #TokenObtainPairView.as_view(),
+        CustomTokenObtainPairView.as_view(),
         name='token_obtain_pair'
      ),
      path(

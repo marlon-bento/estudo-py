@@ -1,3 +1,19 @@
+<script setup>
+import { onMounted, ref } from 'vue';
+const name = ref('') 
+const token = ref("")
+
+function logout(){
+    localStorage.clear()
+}
+function reloadPage(){
+    window.location.reload()
+}
+onMounted(()=>{
+    name.value = localStorage.getItem('first_name')
+    token.value = localStorage.getItem('token')
+})
+</script>
 <template>
     <header class="h-100">
         <div class="d-flex align-items-center m-2">
@@ -17,7 +33,17 @@
             <span class="text-logo fs-1">Locallibrary</span>
             
         </div>
-        <ul class=" m-0 p-0 text-white d-flex align-items-center flex-column h-100 justify-content-center">
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div v-if="token" class="d-flex mb-3 align-items-center gap-2">
+                <p class="text-white fs-1 m-0 p-0">user:</p>
+                <span class="avatar bg-green-lt">{{ name ? name : "US" }}</span>
+                
+            </div>
+
+            <RouterLink  v-if="!token" class="btn btn-info" to="/login">Login</RouterLink>
+            <button v-else @click="()=>{logout();reloadPage()}" class="btn btn-danger">Log out</button>
+        </div>
+        <ul class=" m-0 p-0 text-white d-flex align-items-center flex-column mt-3 justify-content-center">
             <li class=" d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -27,7 +53,7 @@
                     <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
                     <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                 </svg>
-                <RouterLink class="link bg-gray-50" to="/">Home</RouterLink>
+                <RouterLink class="link " to="/">Home</RouterLink>
             </li>
             <li class=" d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
