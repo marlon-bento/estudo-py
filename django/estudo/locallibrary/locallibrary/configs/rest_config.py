@@ -20,8 +20,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=400),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=2),
     'BLACKLIST_AFTER_ROTATION': False,
     'SIGNING_KEY': os.environ.get('SECRET_KEY_JWT', 'INSECURE'),
     'AUTH_HEADER_TYPES': ('Bearer',),

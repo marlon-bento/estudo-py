@@ -1,18 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-const name = ref('') 
-const token = ref("")
 
-function logout(){
-    localStorage.clear()
-}
-function reloadPage(){
-    window.location.reload()
-}
-onMounted(()=>{
-    name.value = localStorage.getItem('first_name')
-    token.value = localStorage.getItem('token')
-})
+import { useLoginStore } from '@/stores/LoginStore.js';
+const login = useLoginStore()
 </script>
 <template>
     <header class="h-100">
@@ -34,14 +24,14 @@ onMounted(()=>{
             
         </div>
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <div v-if="token" class="d-flex mb-3 align-items-center gap-2">
+            <div v-if="login.token" class="d-flex mb-3 align-items-center gap-2">
                 <p class="text-white fs-1 m-0 p-0">user:</p>
-                <span class="avatar bg-green-lt">{{ name ? name : "US" }}</span>
+                <span class="avatar bg-green-lt">{{ login.showLogin ? login.showLogin : "US" }}</span>
                 
             </div>
 
-            <RouterLink  v-if="!token" class="btn btn-info" to="/login">Login</RouterLink>
-            <button v-else @click="()=>{logout();reloadPage()}" class="btn btn-danger">Log out</button>
+            <RouterLink  v-if="!login.token" class="btn btn-info" to="/login">Login</RouterLink>
+            <button v-else @click="()=>{login.logoutAction()}" class="btn btn-danger">Log out</button>
         </div>
         <ul class=" m-0 p-0 text-white d-flex align-items-center flex-column mt-3 justify-content-center">
             <li class=" d-flex align-items-center">

@@ -7,6 +7,10 @@ import Alert404 from '@/components/Alert404.vue';
 import axios from "axios";
 import Pagination from "./Pagination.vue";
 import Confirm from "./Confirm.vue";
+
+import { useLoginStore } from "@/stores/LoginStore";
+import { computed } from 'vue';
+
 const url = ref("http://127.0.0.1:8000/api/v1/quickstart/books/");
 const dataBooks = ref({ results: [] });
 const confirmComponent = ref(false);
@@ -14,8 +18,10 @@ const verificationVar = ref("")
 const filhoRef = ref(null)
 const erroApi = ref("");
 const bookId = ref("")
-const token = ref("")
-import { computed } from 'vue';
+const login = useLoginStore()
+
+
+
 let currentPage = computed(() => dataBooks.value.previous == null ? 1 : dataBooks.value.previous + 1);
 
 async function getBooks(pagina) {
@@ -35,35 +41,58 @@ async function getBooks(pagina) {
         }
     }
 }
-
+async function functionDeleteBook(id){
+    try {
+        const response = await axios.delete(`${url.value}${id}/`, {
+            headers: {
+                'Authorization': `Bearer ${login.token}`
+            }
+        });
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
 async function deleteBook(id) {
     confirmComponent.value = false
-
-    try {
-        erroApi.value = ""
-        const books = await axios.delete(url.value + `${id}/`, {
-            headers:{
-                'Authorization': `Bearer ${token.value}`
+    if(login.token){
+        try {
+            await functionDeleteBook(id)
+            alert("Livro deletado com sucesso");
+            await getBooks(""); // Atualiza a lista de livros após a exclusão
+        } catch (e) {
+            if (e.response && e.response.status === 404) {
+                erroApi.value = "404"
             }
-    });
-        alert("livro deletado com sucesso")
-        getBooks("");
-
-    } catch (e) {
-        if (e.response && e.response.status === 404) {
-            erroApi.value = "404"
+            else if (e.response && e.response.status === 401) {
+                //neste caso tenta fazer refresh no token
+                try {
+                    await login.refreshToken();
+                    await functionDeleteBook(id);
+                    alert("Livro deletado com sucesso");
+                    await getBooks(""); 
+                } catch (refreshError) {
+                    try{
+                        await login.verifyToken()
+                        erroApi.value = "401";
+                    }catch (verifyError) {
+                        login.logoutAction()
+                        alert(verifyError.message);
+                    }
+                    
+                }
+            } else {
+                erroApi.value = "error";
+            }
         }
-        else if (e.response && e.response.status === 401) {
-            erroApi.value = "401"
-        } else {
-            erroApi.value = "error";
-        }
+    }else{
+        window.alert('para deletar um livro primeiro faça login')
     }
+
 
 }
 
 onMounted(async () => {
-    token.value = localStorage.getItem('token')
     await getBooks("")
 });
 </script>

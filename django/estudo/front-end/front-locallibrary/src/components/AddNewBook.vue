@@ -2,9 +2,10 @@
 import axios from 'axios';
 import { onMounted, ref } from 'vue'
 import AlertScuccess from '@/components/AlertScuccess.vue'
+import { useLoginStore } from '@/stores/LoginStore';
 const dataAuthors = ref([])
 const dataGenres = ref([])
-
+const login = useLoginStore()
 
 // variaveis dos formularios
 
@@ -30,7 +31,9 @@ async function enviarDados(){
             author: author.value
         }
         try{
-            const response = await axios.post("http://127.0.0.1:8000/api/v1/quickstart/books/",dataObject)
+            const response = await axios.post("http://127.0.0.1:8000/api/v1/quickstart/books/",dataObject,    {headers: {
+                'Authorization': `Bearer ${login.token}`
+            }})
 
             console.log(response.data) 
             create.value = response.data
